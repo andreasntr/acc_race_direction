@@ -1,0 +1,53 @@
+{
+  "COMMANDS": {
+    "REQUEST_CONN": 1,
+    "UNREGISTER_COMMAND_APPLICATION": 9,
+    "REQUEST_ENTRY_LIST": 10
+  },
+  "MSG_TYPE": {
+    "REGISTRATION_RESULT": 1,
+    "REALTIME_UPDATE": 2,
+    "REALTIME_CAR_UPDATE": 3,
+    "ENTRY_LIST": 4,
+    "ENTRY_LIST_CAR": 6,
+    "BROADCASTING_EVENT": 7
+  },
+  "CAR_LOCATION": [
+    "None",
+    "Track",
+    "Pitlane",
+    "PitEntry",
+    "PitExit"
+  ],
+  "SESSION_PHASE": [
+    "NONE",
+    "Starting",
+    "PreFormation",
+    "FormationLap",
+    "PreSession",
+    "Session",
+    "SessionOver",
+    "PostSession",
+    "ResultUI"
+  ],
+  "SESSION_TYPE": {
+    "0": "Practice",
+    "4": "Qualifying",
+    "9": "Superpole",
+    "10": "Race",
+    "11": "Hotlap",
+    "12": "Hotstint",
+    "13": "HotlapSuperpole",
+    "14": "Replay"
+  },
+  "BROADCASTING_EVENT_TYPE": [
+    "None",
+    "GreenFlag",
+    "SessionOver",
+    "PenaltyCommMsg",
+    "Accident",
+    "LapCompleted",
+    "BestSessionLap",
+    "BestPersonalLap"
+  ]
+}
