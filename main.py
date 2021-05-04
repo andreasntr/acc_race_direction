@@ -5,7 +5,7 @@ from threading import Thread
 from queue import Queue
 from json import load
 import struct
-from tkinter import Spinbox, StringVar, Tk, Frame, Label, Button, Toplevel, Canvas
+from tkinter import PhotoImage, Spinbox, StringVar, Tk, Frame, Label, Button, Toplevel, Canvas
 from tkinter.ttk import Notebook, Combobox, Scrollbar
 from tkinter.scrolledtext import ScrolledText
 
@@ -150,7 +150,7 @@ def connect():
 def disconnect():
     msg = bytearray()
     msg.append(COMMANDS['UNREGISTER_COMMAND_APPLICATION'])
-    print('Disconnected')
+    # print('Disconnected')
     game_server.sendto(msg, (IP, ACC_PORT))
     game_server.close()
     window.destroy()
@@ -181,15 +181,16 @@ def process_events():
         try:
             if data[0] == MSG_TYPE['REGISTRATION_RESULT'] and not conn_id:
                 conn_id = read_big_int(data[1:5])
-                print(f'Connected with id {conn_id}')
+                #print(f'Connected with id {conn_id}')
                 request_entry_list(conn_id)
+                window.winfo_children()[0].config(text='Connected')
                 event_queue.task_done()
 
             elif data[0] == MSG_TYPE['REALTIME_UPDATE']:
                 sess = SESSION_TYPE[str(read_small_int(data[5]))]
                 if not session or session != sess:
                     session = sess
-                    print(f'\nSession: {session}\n')
+                    #print(f'\nSession: {session}\n')
                     timestamp_accidents.clear()
                     event_queue.task_done()
 
@@ -306,6 +307,10 @@ def set_vsc_details(button, kmh):
     else:
         button['bg'] = 'Gray'
         vsc_deployed = False
+        for car in ids_to_cars:
+            if 'last_vsc' in ids_to_cars[car]:
+                del ids_to_cars[car]['last_vsc']
+        listed_vsc.sort(key=lambda x: x[1], reverse=True)
         update_vsc_table()
 
 
@@ -334,8 +339,10 @@ def update_vsc_table():
 
     vsc_label = Label(table, text='VSC speed', width=15,
                       height=2, font='Helvetica 8 bold')
-    vsc_speed = Spinbox(table, from_=vsc_kmh, to=120, increment=10,
-                        state='readonly', width=15)
+    cur_vsc_speed = StringVar(table)
+    cur_vsc_speed.set(vsc_kmh)
+    vsc_speed = Spinbox(table, from_=50, to=200, increment=10,
+                        state='readonly', width=15, textvariable=cur_vsc_speed)
     vsc_button = Button(table, text='On/Off', bg='Gray',
                         command=lambda: set_vsc_details(vsc_button, vsc_speed.get()))
     vsc_label.grid(row=0, column=4,
@@ -512,8 +519,8 @@ def spot_accidents():
         to_remove = []
         items = list(timestamp_accidents.items())
         for timestamp, data in items:
-            print(
-                f"{', '.join([f'{car}' for car in data['cars']])}\tLap: {data['lap']} (#{data['cars'][0]})")
+            # print(
+            #     f"{', '.join([f'{car}' for car in data['cars']])}\tLap: {data['lap']} (#{data['cars'][0]})")
             listed_accidents.append(
                 (', '.join([f'{car}' for car in data['cars']]), data['lap'], session))
             to_remove.append(timestamp)
@@ -528,7 +535,7 @@ def spot_accidents():
 def dismiss_accident(index):
     listed_accidents.pop(index)
     update_accidents_table()
-    print(f'Racing Incident')
+    #print(f'Racing Incident')
 
 
 def dismiss_vsc_accident(index):
@@ -537,14 +544,14 @@ def dismiss_vsc_accident(index):
 
 
 def log_accident(index, box, message):
-    print(message)
+    # print(message)
     listed_accidents.pop(index)
     update_accidents_table()
     box.destroy()
 
 
 def log_vsc(index, box, message):
-    print(message)
+    # print(message)
     listed_vsc.pop(index)
     update_vsc_table()
     box.destroy()
@@ -563,8 +570,13 @@ def create_gui():
 
     window = Tk()
     window.title("ACC Race Direction")
+    window.iconphoto(True, PhotoImage(file='flag.png'))
     window.geometry("600x400")
+    window.wm_resizable(False, False)
     window.maxsize(height=0, width=590)
+
+    conn_label = Label(window, text="Connecting...")
+    conn_label.pack(anchor='ne')
 
     tablayout = Notebook(window)
 
