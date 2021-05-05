@@ -144,7 +144,6 @@ def connect():
     game_server.sendto(msg, (IP, ACC_PORT))
     data, _ = game_server.recvfrom(2 * 1024 * 1024)
     event_queue.put_nowait(data)
-    # window["Connect"].update(disabled=True)
 
 
 def disconnect():
@@ -154,22 +153,6 @@ def disconnect():
     game_server.sendto(msg, (IP, ACC_PORT))
     game_server.close()
     window.destroy()
-
-
-def gui():
-    global window
-    update_accidents_table()
-    # global listed_accidents
-    # window.finalize()
-    # while True:
-    #     event, _ = window.read()
-    #     if event == "Exit" or event == sg.WIN_CLOSED:
-    #         disconnect()
-    #         break
-    #     window['accidents_list'].update(
-    #         values=listed_accidents, scroll_to_index=len(listed_accidents) - 1)
-    while True:
-        window.update()
 
 
 def process_events():
@@ -294,7 +277,6 @@ def update_accidents_table():
                                     padx=1, pady=1, sticky="nsew")
                 table.grid_columnconfigure(j + 1, weight=1)
 
-    # table.update_idletasks()
     canvas.create_window((0, 0), window=table, anchor='nw')
 
 
@@ -380,7 +362,6 @@ def update_vsc_table():
                                     padx=1, pady=1, sticky="nsew")
                 table.grid_columnconfigure(j + 1, weight=1)
 
-    # table.update_idletasks()
     canvas.create_window((0, 0), window=table, anchor='nw')
 
 
@@ -519,8 +500,6 @@ def spot_accidents():
         to_remove = []
         items = list(timestamp_accidents.items())
         for timestamp, data in items:
-            # print(
-            #     f"{', '.join([f'{car}' for car in data['cars']])}\tLap: {data['lap']} (#{data['cars'][0]})")
             listed_accidents.append(
                 (', '.join([f'{car}' for car in data['cars']]), data['lap'], session))
             to_remove.append(timestamp)
@@ -607,14 +586,15 @@ main_thread = Thread(target=get_data, daemon=True)
 events_thread = Thread(target=process_events, daemon=True)
 accidents_thread = Thread(target=spot_accidents, daemon=True)
 
-window, accidents_tab, vsc_tab = create_gui()
+if __name__ == '__main__':
+    window, accidents_tab, vsc_tab = create_gui()
 
-events_thread.start()
-accidents_thread.start()
-main_thread.start()
+    events_thread.start()
+    accidents_thread.start()
+    main_thread.start()
 
-connect()
+    connect()
 
-window.after(100, update_accidents_table)
-window.after(100, update_vsc_table)
-window.mainloop()
+    window.after(100, update_accidents_table)
+    window.after(100, update_vsc_table)
+    window.mainloop()
