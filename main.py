@@ -115,13 +115,13 @@ def update_car_info(id, lap, location, kmh=None):
                                                                                                  ids_to_cars[str(id)]['last_vsc']) / 1000
                 ids_to_cars[str(id)]['last_vsc'] = timestamp
                 filtered = list(filter(
-                    lambda entry: entry[0] == f"#{ids_to_cars[str(id)]['number']}", listed_vsc))
+                    lambda entry: entry[0] == ids_to_cars[str(id)]['number'], listed_vsc))
                 if len(filtered) > 0:
                     listed_vsc[listed_vsc.index(
-                        filtered[0])] = (f"#{ids_to_cars[str(id)]['number']}", ids_to_cars[str(id)]['time_over_vsc'])
+                        filtered[0])] = (ids_to_cars[str(id)]['number'], ids_to_cars[str(id)]['time_over_vsc'])
                 else:
                     listed_vsc.append(
-                        (f"#{ids_to_cars[str(id)]['number']}", ids_to_cars[str(id)]['time_over_vsc']))
+                        (ids_to_cars[str(id)]['number'], ids_to_cars[str(id)]['time_over_vsc']))
             else:
                 ids_to_cars[str(id)]['kmh'] = kmh
                 ids_to_cars[str(id)]['last_vsc'] = timestamp
@@ -494,9 +494,9 @@ def add_vsc_penalty(index):
     label = Label(dialog, text='Penalty')
     label.pack(fill='both', side='left')
 
-    cb = Combobox(dialog, values=penalties, state="readonly")
-    cb.current(0)
-    cb.pack(fill='both', side='left')
+    penalty = Combobox(dialog, values=penalties, state="readonly")
+    penalty.current(0)
+    penalty.pack(fill='both', side='left')
 
     value = StringVar(popup)
     # round to nearest 5
@@ -511,11 +511,58 @@ def add_vsc_penalty(index):
     confirm = Button(buttons, text='Confirm',
                      command=lambda: log_vsc(index, popup, f'Penalty : {"+"+seconds.get()+"s" if cb.get()=="Time" else cb.get()}'))
     confirm.pack(fill='both', side='left', padx=2)
+    suggestion = Button(buttons, text='Get commands',
+                        command=lambda: suggest_vsc_penalty(index, seconds.get(), penalty.get()))
+    suggestion.pack(fill='both', side='left', padx=2)
     cancel = Button(buttons, text='Cancel',
                     command=popup.destroy)
     cancel.pack(fill='both', side='right', padx=2)
 
 # update accidents list from ids_to_cars
+
+
+def suggest_vsc_penalty(index, seconds, penalty):
+    car = int(listed_vsc[index][0])
+    penalty_str = ""
+    if penalty == 'Time':
+        secs = int(seconds) // 15
+        reminder = int(seconds) % 15
+        if secs:
+            for _ in range(secs):
+                penalty_str += f"\\tp15 {car}\n"
+        if reminder:
+            for _ in range(reminder // 5):
+                penalty_str += f"\\tp5 {car}\n"
+    else:
+        penalty_str = f"\\{penalty.lower()} {car}"
+
+    popup = Toplevel(window)
+
+    x = window.winfo_x()
+    y = window.winfo_y()
+    popup.geometry("+%d+%d" % (x + window.winfo_width() //
+                   3.5, y + window.winfo_height() //
+                   3))
+
+    dialog = Frame(popup, padx=20, pady=10, width=200)
+    dialog.pack(fill='both', anchor='center')
+
+    label = Label(dialog, text='Copy this commands as admin')
+    label.pack(fill='both', side='top')
+
+    text = ScrolledText(dialog, width=10, height=5)
+    text.insert('end', penalty_str)
+    text.pack(fill='both', side='bottom')
+
+    buttons = Frame(popup, padx=20, pady=5)
+    buttons.pack(side='bottom')
+
+    confirm = Button(buttons, text='Confirm',
+                     command=lambda: log_vsc(index, popup, f'Penalty : {"+"+seconds+"s" if penalty=="Time" else penalty} to #{car}'))
+    confirm.pack(fill='both', side='left', padx=2)
+    cancel = Button(buttons, text='Cancel',
+                    command=popup.destroy)
+    cancel.pack(fill='both', side='right', padx=2)
 
 
 def spot_accidents():
