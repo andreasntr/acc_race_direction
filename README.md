@@ -26,6 +26,8 @@ How to use it
 - In the Accidents tab, the lap number is that associated with the first of the listed cars.
 
 
-<b>IMPORTANT</b>: sometimes ACC logs may be inconsistent so accidents with only one car may be showed or more than two accidents may be grouped. In the first case, if the car to penalize is not in the list, just type in its number. In the second case you would need to look at the given lap for all the listed cars. Sorry for that, there's no other way to group cars other than by timestamp for now.
+<b>Known limitations</b>: sometimes ACC logs may be inconsistent so accidents with only one car may be showed or more than two accidents may be grouped. In the first case, if the car to penalize is not in the list, just type in its number. In the second case you would need to look at the given lap for all the listed cars. Sorry for that, there's no other way to group cars other than by timestamp for now.
+
+<b>IMPORTANT</b>: Python3 must be installed on your pc
 
 Feel free to post a pull request if you have a better way to manage things (and also improve the UI, since I'm not expert in GUI programming or frontend coding) or open an issue to report bugs.
