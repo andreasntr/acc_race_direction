@@ -9,13 +9,12 @@ from tkinter import PhotoImage, Spinbox, StringVar, Tk, Frame, Label, Button, To
 from tkinter.ttk import Notebook, Combobox, Scrollbar
 from tkinter.scrolledtext import ScrolledText
 
-COMMANDS, MSG_TYPE, CAR_LOCATION, SESSION_PHASE, SESSION_TYPE, BROADCASTING_EVENT_TYPE = load(
+ACC_PORT, SERVER_PORT, COMMANDS, MSG_TYPE, CAR_LOCATION, SESSION_PHASE, SESSION_TYPE, BROADCASTING_EVENT_TYPE = load(
     open('./consts.json')).values()
 
 game_server = socket(type=SOCK_DGRAM)
-game_server.bind(('localhost', 9003))
+game_server.bind(('localhost', SERVER_PORT))
 IP = "127.0.0.1"
-ACC_PORT = 9000
 PROTOCOL_VERSION = 4
 DISPLAY_NAME = "race_control"
 CONN_PW = ""
@@ -260,7 +259,7 @@ def update_accidents_table():
     canvas = Canvas(accidents_tab,
                     yscrollcommand=scrollbar.set)
     canvas.create_image(0, 0, anchor='ne')
-    canvas['scrollregion'] = (0, 0, 0, len(listed_accidents) * 30)
+    canvas['scrollregion'] = (0, 0, 0, (len(listed_accidents) + 1) * 30)
     canvas['width'] = 565
     canvas['height'] = 370
     canvas.grid(row=0, column=0)
@@ -329,7 +328,7 @@ def update_vsc_table():
     canvas = Canvas(vsc_tab,
                     yscrollcommand=scrollbar.set)
     canvas.create_image(0, 0, anchor='ne')
-    canvas['scrollregion'] = (0, 0, 0, len(listed_vsc) * 30)
+    canvas['scrollregion'] = (0, 0, 0, (len(listed_vsc) + 1) * 30)
     canvas['width'] = 565
     canvas['height'] = 370
     canvas.grid(row=0, column=0)
