@@ -531,7 +531,7 @@ def spot_accidents():
 
         for timestamp in to_remove:
             timestamp_accidents.pop(timestamp)
-        sleep(5)
+        sleep(THRESHOLD // 1000)
 
 
 def dismiss_accident(index):
