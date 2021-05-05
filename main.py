@@ -589,7 +589,7 @@ def create_gui():
     # tab1
     accidents_tab = Frame(tablayout)
 
-    tablayout.add(accidents_tab, text='Penalties')
+    tablayout.add(accidents_tab, text='Accidents')
 
     # tab2
     vsc_tab = Frame(tablayout)
