@@ -17,7 +17,7 @@ game_server.bind(('localhost', 9003))
 IP = "127.0.0.1"
 ACC_PORT = 9000
 PROTOCOL_VERSION = 4
-DISPLAY_NAME = "ok"
+DISPLAY_NAME = "race_control"
 CONN_PW = ""
 COMMAND_PW = ""
 MS_UPDATE_INTERVAL = 100
@@ -31,28 +31,40 @@ listed_vsc = []
 
 # region utils
 
+# write string to bytes
+
 
 def write_string(string, buffer):
     buffer.append(len(bytearray(string, 'utf-8')))
     buffer.append(0)
     buffer.extend(string.encode('utf-8'))
 
+# read 1 byte int
+
 
 def read_small_int(data):
     return struct.unpack('b', bytes([data]))[0]
+
+# read 2 bytes int
 
 
 def read_int(data):
     return struct.unpack('H', data)[0]
 
+# read 4 bytes int
+
 
 def read_big_int(data):
     return struct.unpack('i', data)[0]
+
+# read string from bytes
 
 
 def read_string(data):
     length = read_int(data[0:2])
     return data[2:(2 + length)].decode('utf-8')
+
+# get bytes after a string
 
 
 def get_bytes_after_string(data):
@@ -117,6 +129,8 @@ def update_car_info(id, lap, location, kmh=None):
         elif 'last_vsc' in ids_to_cars[str(id)]:
             del ids_to_cars[str(id)]['last_vsc']
 
+# send request to get updated entry list
+
 
 def request_entry_list(conn_id):
     msg = bytearray(b'\x0a')
@@ -153,6 +167,8 @@ def disconnect():
     game_server.sendto(msg, (IP, ACC_PORT))
     game_server.close()
     window.destroy()
+
+# process data coming from ACC
 
 
 def process_events():
@@ -230,6 +246,8 @@ def process_events():
             event_queue.put(data)
             event_queue.task_done()
 
+# render UI accidents tab
+
 
 def update_accidents_table():
     for widget in accidents_tab.winfo_children():
@@ -294,6 +312,8 @@ def set_vsc_details(button, kmh):
                 del ids_to_cars[car]['last_vsc']
         listed_vsc.sort(key=lambda x: x[1], reverse=True)
         update_vsc_table()
+
+# render UI VSC tab
 
 
 def update_vsc_table():
@@ -412,6 +432,8 @@ def add_penalty(index):
                     command=popup.destroy)
     cancel.pack(fill='both', side='right', padx=2)
 
+# suggest penalty commands to the user
+
 
 def suggest_penalty(index, seconds, penalty, car):
     penalty_str = ""
@@ -494,6 +516,8 @@ def add_vsc_penalty(index):
                     command=popup.destroy)
     cancel.pack(fill='both', side='right', padx=2)
 
+# update accidents list from ids_to_cars
+
 
 def spot_accidents():
     while True:
@@ -535,6 +559,8 @@ def log_vsc(index, box, message):
     update_vsc_table()
     box.destroy()
 
+# retrieve data from ACC
+
 
 def get_data():
     while True:
@@ -543,6 +569,8 @@ def get_data():
             event_queue.put_nowait(data)
         except:
             exit()
+
+# create main window
 
 
 def create_gui():
