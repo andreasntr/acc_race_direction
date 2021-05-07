@@ -10,6 +10,13 @@ from tkinter.ttk import Notebook, Combobox, Scrollbar
 from tkinter.scrolledtext import ScrolledText
 from sys import _MEIPASS
 from os.path import join, abspath
+import logging
+
+logger = logging.getLogger('logger')
+logger.setLevel(logging.DEBUG)
+fh = logging.FileHandler('race_control.log')
+fh.setLevel(logging.DEBUG)
+logger.addHandler(fh)
 
 # region utils
 
@@ -155,7 +162,7 @@ def connect():
 def disconnect():
     msg = bytearray()
     msg.append(COMMANDS['UNREGISTER_COMMAND_APPLICATION'])
-    # print('Disconnected')
+    logger.info('Disconnected')
     game_server.sendto(msg, (IP, ACC_PORT))
     game_server.close()
     window.destroy()
@@ -172,7 +179,7 @@ def process_events():
         try:
             if data[0] == MSG_TYPE['REGISTRATION_RESULT'] and not conn_id:
                 conn_id = read_big_int(data[1:5])
-                #print(f'Connected with id {conn_id}')
+                logger.info(f'Connected with id {conn_id}')
                 request_entry_list(conn_id)
                 window.winfo_children()[0].config(text='Connected')
                 event_queue.task_done()
@@ -181,7 +188,7 @@ def process_events():
                 sess = SESSION_TYPE[str(read_small_int(data[5]))]
                 if not session or session != sess:
                     session = sess
-                    #print(f'\nSession: {session}\n')
+                    logger.info(f'Session: {session}')
                     timestamp_accidents.clear()
                     event_queue.task_done()
 
@@ -415,7 +422,7 @@ def add_penalty(index):
     cars.pack(fill='both', side='right', padx=2)
 
     confirm = Button(buttons, text='Confirm',
-                     command=lambda: log_accident(index, popup, f'Penalty : {"+"+seconds.get()+"s" if penalty.get()=="Time" else penalty.get()} to #{cars.get()}'))
+                     command=lambda: log_accident(index, popup, f'Penalty: {"+"+seconds.get()+"s" if penalty.get()=="Time" else penalty.get()} to #{cars.get()}'))
     confirm.pack(fill='both', side='left', padx=2)
     suggestion = Button(buttons, text='Get commands',
                         command=lambda: suggest_penalty(index, seconds.get(), penalty.get(), cars.get()))
@@ -502,7 +509,7 @@ def add_vsc_penalty(index):
     buttons.pack(side='bottom')
 
     confirm = Button(buttons, text='Confirm',
-                     command=lambda: log_vsc(index, popup, f'Penalty : {"+"+seconds.get()+"s" if cb.get()=="Time" else cb.get()}'))
+                     command=lambda: log_vsc(index, popup, f'Penalty: {"+"+seconds.get()+"s" if penalty.get()=="Time" else penalty.get()}'))
     confirm.pack(fill='both', side='left', padx=2)
     suggestion = Button(buttons, text='Get commands',
                         command=lambda: suggest_vsc_penalty(index, seconds.get(), penalty.get()))
@@ -551,7 +558,7 @@ def suggest_vsc_penalty(index, seconds, penalty):
     buttons.pack(side='bottom')
 
     confirm = Button(buttons, text='Confirm',
-                     command=lambda: log_vsc(index, popup, f'Penalty : {"+"+seconds+"s" if penalty=="Time" else penalty} to #{car}'))
+                     command=lambda: log_vsc(index, popup, f'Penalty : {"+"+seconds+"s" if penalty=="Time" else penalty}'))
     confirm.pack(fill='both', side='left', padx=2)
     cancel = Button(buttons, text='Cancel',
                     command=popup.destroy)
@@ -575,25 +582,30 @@ def spot_accidents():
 
 
 def dismiss_accident(index):
+    logger.info(
+        f'Accident: Cars: {listed_accidents[index][0]} Lap: {listed_accidents[index][1]} -> Racing Incident')
     listed_accidents.pop(index)
     update_accidents_table()
-    #print(f'Racing Incident')
 
 
 def dismiss_vsc_accident(index):
+    logger.info(
+        f'VSC Infrangement: Car: {listed_vsc[index][0]} Seconds: {listed_vsc[index][1]:.2f} -> NFA')
     listed_vsc.pop(index)
     update_vsc_table()
 
 
 def log_accident(index, box, message):
-    # print(message)
+    logger.info(
+        f'Accident: Cars: {listed_accidents[index][0]} Lap: {listed_accidents[index][1]} -> {message}')
     listed_accidents.pop(index)
     update_accidents_table()
     box.destroy()
 
 
 def log_vsc(index, box, message):
-    # print(message)
+    logger.info(
+        f'VSC Infrangement: Car: {listed_vsc[index][0]} Seconds: {listed_vsc[index][1]:.2f} -> {message}')
     listed_vsc.pop(index)
     update_vsc_table()
     box.destroy()
@@ -676,14 +688,17 @@ events_thread = Thread(target=process_events, daemon=True)
 accidents_thread = Thread(target=spot_accidents, daemon=True)
 
 if __name__ == '__main__':
-    window, accidents_tab, vsc_tab = create_gui()
+    try:
+        window, accidents_tab, vsc_tab = create_gui()
 
-    events_thread.start()
-    accidents_thread.start()
-    main_thread.start()
+        events_thread.start()
+        accidents_thread.start()
+        main_thread.start()
 
-    connect()
+        connect()
 
-    window.after(100, update_accidents_table)
-    window.after(100, update_vsc_table)
-    window.mainloop()
+        window.after(100, update_accidents_table)
+        window.after(100, update_vsc_table)
+        window.mainloop()
+    except Exception as e:
+        logger.critical(e)
