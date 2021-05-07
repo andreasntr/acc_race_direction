@@ -19,7 +19,7 @@ Also, the VSC (virtual safety car) tab allows you to choose a speed limit and ge
 
 <h3>How to use it</h3>
 
-- Default ports are 9000 and 9003 (the first one is the broadcast port of the game) and default connection password is blank but can be edited from the config.json file. Please notice that they password must match those set for the entire game, info <a href=https://www.assettocorsa.net/forum/index.php?threads/lets-talk-about-broadcasting-users-thread.53828/>here</a>;
+- Default ports are 9000 and 9003 (the first one is the broadcast port of the game) and default connection password is blank but can be edited from the ***config.json*** file. Please notice that they password must match those set for the entire game, info <a href=https://www.assettocorsa.net/forum/index.php?threads/lets-talk-about-broadcasting-users-thread.53828/>here</a>;
 - Start an ACC session (offline or online);
 - Double click on ***acc_race_control.exe***;
 - Wait for the "Connected" status in the top-right corner;
