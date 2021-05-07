@@ -441,12 +441,12 @@ def suggest_penalty(index, seconds, penalty, car):
         reminder = int(seconds) % 15
         if secs:
             for _ in range(secs):
-                penalty_str += f"\\tp15 {car}\n"
+                penalty_str += f"/tp15 {car}\n"
         if reminder:
             for _ in range(reminder // 5):
-                penalty_str += f"\\tp5 {car}\n"
+                penalty_str += f"/tp5 {car}\n"
     else:
-        penalty_str = f"\\{penalty.lower()} {car}"
+        penalty_str = f"/{penalty.lower()} {car}"
 
     popup = Toplevel(window)
 
@@ -529,12 +529,12 @@ def suggest_vsc_penalty(index, seconds, penalty):
         reminder = int(seconds) % 15
         if secs:
             for _ in range(secs):
-                penalty_str += f"\\tp15 {car}\n"
+                penalty_str += f"/tp15 {car}\n"
         if reminder:
             for _ in range(reminder // 5):
-                penalty_str += f"\\tp5 {car}\n"
+                penalty_str += f"/tp5 {car}\n"
     else:
-        penalty_str = f"\\{penalty.lower()} {car}"
+        penalty_str = f"/{penalty.lower()} {car}"
 
     popup = Toplevel(window)
 
