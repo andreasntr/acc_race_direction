@@ -8,27 +8,20 @@ import struct
 from tkinter import PhotoImage, Spinbox, StringVar, Tk, Frame, Label, Button, Toplevel, Canvas
 from tkinter.ttk import Notebook, Combobox, Scrollbar
 from tkinter.scrolledtext import ScrolledText
-
-ACC_PORT, SERVER_PORT, COMMANDS, MSG_TYPE, CAR_LOCATION, SESSION_PHASE, SESSION_TYPE, BROADCASTING_EVENT_TYPE = load(
-    open('./consts.json')).values()
-
-game_server = socket(type=SOCK_DGRAM)
-game_server.bind(('localhost', SERVER_PORT))
-IP = "127.0.0.1"
-PROTOCOL_VERSION = 4
-DISPLAY_NAME = "race_control"
-CONN_PW = ""
-COMMAND_PW = ""
-MS_UPDATE_INTERVAL = 100
-THRESHOLD = 5000
-
-ids_to_cars = {}
-timestamp_accidents = {}
-event_queue = Queue()
-listed_accidents = []
-listed_vsc = []
+from sys import _MEIPASS
+from os.path import join, abspath
 
 # region utils
+
+
+def resource_path(relative_path):
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = _MEIPASS
+    except Exception:
+        base_path = abspath(".")
+
+    return join(base_path, relative_path)
 
 # write string to bytes
 
@@ -623,7 +616,7 @@ def create_gui():
 
     window = Tk()
     window.title("ACC Race Control")
-    window.iconphoto(True, PhotoImage(file='flag.png'))
+    window.iconphoto(True, PhotoImage(file=resource_path('flag.png')))
     window.geometry("600x400")
     window.wm_resizable(False, False)
     window.maxsize(height=0, width=590)
@@ -650,6 +643,28 @@ def create_gui():
     return window, accidents_tab, vsc_tab
 # endregion
 
+
+COMMANDS, MSG_TYPE, CAR_LOCATION, SESSION_PHASE, SESSION_TYPE, BROADCASTING_EVENT_TYPE = load(
+    open(resource_path('consts.json'))).values()
+
+ACC_PORT, SERVER_PORT, PASSWORD = load(
+    open('config.json')).values()
+
+game_server = socket(type=SOCK_DGRAM)
+game_server.bind(('localhost', SERVER_PORT))
+IP = "127.0.0.1"
+PROTOCOL_VERSION = 4
+DISPLAY_NAME = "race_control"
+CONN_PW = PASSWORD
+COMMAND_PW = ""
+MS_UPDATE_INTERVAL = 100
+THRESHOLD = 5000
+
+ids_to_cars = {}
+timestamp_accidents = {}
+event_queue = Queue()
+listed_accidents = []
+listed_vsc = []
 
 session = None
 vsc_deployed = False
