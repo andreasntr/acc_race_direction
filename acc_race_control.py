@@ -29,6 +29,7 @@ def resource_path(relative_path):
         base_path = abspath(".")
 
     return join(base_path, relative_path)
+    return relative_path
 
 # write string to bytes
 
@@ -659,12 +660,11 @@ def create_gui():
 COMMANDS, MSG_TYPE, CAR_LOCATION, SESSION_PHASE, SESSION_TYPE, BROADCASTING_EVENT_TYPE = load(
     open(resource_path('consts.json'))).values()
 
-ACC_PORT, SERVER_PORT, PASSWORD = load(
+ACC_PORT, SERVER_PORT, IP, PASSWORD = load(
     open('config.json')).values()
 
 game_server = socket(type=SOCK_DGRAM)
-game_server.bind(('localhost', SERVER_PORT))
-IP = "127.0.0.1"
+game_server.bind(('0.0.0.0', SERVER_PORT))
 PROTOCOL_VERSION = 4
 DISPLAY_NAME = "race_control"
 CONN_PW = PASSWORD
