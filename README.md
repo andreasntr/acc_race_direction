@@ -19,11 +19,31 @@ Also, the VSC (virtual safety car) tab allows you to choose a speed limit and ge
 
 <h3>How to use it</h3>
 
-- Default ports are 9000 and 9003 (the first one is the broadcast port of the game) and default connection password is blank but can be edited from the ***config.json*** file. Please notice that they password must match those set for the entire game, info <a href=https://www.assettocorsa.net/forum/index.php?threads/lets-talk-about-broadcasting-users-thread.53828/>here</a>;
+- Default ports are 9000 and 9003 (the first one is the broadcast port of the game) and default connection password is blank but can be edited from the ***config.json*** file*. Please notice that they password must match those set for the entire game, info <a href=https://www.assettocorsa.net/forum/index.php?threads/lets-talk-about-broadcasting-users-thread.53828/>here</a>;
 - Start an ACC session (offline or online);
 - Double click on ***acc_race_control.exe***;
 - Wait for the "Connected" status in the top-right corner;
 - In the Accidents tab, the lap number is that associated with the first of the listed cars.
+
+\* If this is you broadcasting.json
+```
+{
+  "updListenerPort": 9000,
+  "connectionPassword": "aaaa",
+  "commandPassword": ""
+}
+```
+your config.json must be:
+```
+{
+    "ACC_PORT": 9000,
+    "SERVER_PORT": 9003,
+    "IP": 127.0.0.1,
+    "PASSWORD": "aaaa"
+}
+```
+
+
 
 
 <b>Known limitations</b>: sometimes ACC logs may be inconsistent so accidents with only one car may be showed or more than two accidents may be grouped. In the first case, if the car to penalize is not in the list, just type in its number. In the second case you would need to look at the given lap for all the listed cars. Sorry for that, there's no other way to group cars other than by timestamp for now.
