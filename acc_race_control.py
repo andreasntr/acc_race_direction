@@ -628,7 +628,7 @@ def get_data():
 def create_gui():
 
     window = Tk()
-    window.title("ACC Race Control")
+    window.title("ACC Race Direction")
     window.iconphoto(True, PhotoImage(file=resource_path('flag.png')))
     window.geometry("600x400")
     window.wm_resizable(False, False)
