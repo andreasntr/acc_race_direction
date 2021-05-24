@@ -1,4 +1,4 @@
-# acc_race_control
+# acc_race_direction
 
 If you have organized at least one race with live stewarding, you would know that checking the whole pack of cars to look for incidents is not easy. In endurance races, it's easier because each team has at least one driver who can report directly to the Race Control, but that's not the case for single-driver races. Indeed, they can't drive and report accidents at the same time.
 That's why I built an automatic incident reporting system for ACC which detects every contact, the lap in which it happened and the cars involved.
